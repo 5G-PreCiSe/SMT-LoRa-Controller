@@ -6,7 +6,7 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 - Operates up to eight SMT100 sensors connected via RS485
 - Designed for outdoor application in harsh environments
 - Integrated rechargeable battery with (optional) solar panel for autonomous operation
-- Low power consumption due to hardware deep sleep mode
+- Low power consumption due to hardware deep sleep
 - Fully configurable via WiFi and HTTP
 - Low maintenance
 
