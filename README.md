@@ -2,10 +2,10 @@
 This repository contains the hardware documentation for an ESP32-based LoRaWAN controller unit that can be connected to SMT100 soil moisture sensors via RS485. 
 
 ## Features
-- Operates up to eight SMT100 sensors for soil moisture and temperature connected via RS485
-- Sends measurements to backend via LoRaWAN (OTAA Class A)
-- Designed for outdoor application
-- Integrated rechargeable battery with (optional) solar panel for self-sustainable operation
+- LoRa connectivity (OTAA Class A) for continous soil moisture and temperature monitoring
+- Operates up to eight SMT100 sensors connected via RS485
+- Designed for outdoor application in harsh environments
+- Integrated rechargeable battery with (optional) solar panel for autonomous operation
 - Low power consumption due to hardware deep sleep mode
 - Fully configurable via WiFi and HTTP
 - Low maintenance
