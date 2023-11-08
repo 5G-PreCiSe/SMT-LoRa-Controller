@@ -26,9 +26,9 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 | 1 | IRL3803 n-CH MOSFET, TO-220AB | [Reichelt](https://www.reichelt.de/mosfet-n-ch-30v-140a-200w-to-220ab-irl-3803-p41757.html?PROVID=2788&gclid=Cj0KCQiAgK2qBhCHARIsAGACuzk8QXDI6kYSX9KsDvWq_j0QCLs389qAJTPMl2cFtrOL-Y8Te5CxS44aAv_ZEALw_wcB) |
 | 2 | Tactile Switch 6x6mm JTP 1236 series| [Reichelt](https://www.reichelt.de/kurzhubtaster-6x6mm-hoehe-5-0mm-12v-vertikal-taster-9302-p44579.html?search=TASTER+9302) |
 | 2 | 4-poles Terminal 5mm spacing | [Reichelt](https://www.reichelt.de/de/en/solderable-screw-terminal-4-pole-rm-5-mm-90--ctb5202-4-p292671.html?GROUPID=7541&START=0&OFFSET=16&SID=96d7a34ab3182b0141f212f568cc687297c3f76e34df35ef2bfdb&LANGUAGE=EN&&r=1) |
-| 10 | 10k Ohm axial-lead resistor (type 0207) | |
-| 1 | 100 Ohm axial-lead resistors (type 0207) | |
-| 1 | 20 Ohm axial-lead resistors (type 0207) | |
+| 10 | 10k Ohm axial-lead resistor (type 0207) | [Reichelt](https://www.reichelt.de/widerstand-metallschicht-10-0-kohm-0207-0-6-w-1--metall-10-0k-p11449.html?&trstct=pos_0&nbc=1)|
+| 1 | 100 Ohm axial-lead resistors (type 0207) | [Reichelt](https://www.reichelt.de/widerstand-metallschicht-100-ohm-0207-0-6-w-1--metall-100-p11457.html?search=METALL+100) |
+| 1 | 20 Ohm axial-lead resistors (type 0207) | [Reichelt](https://www.reichelt.de/widerstand-metallschicht-20-0-ohm-0207-0-6-w-1--metall-20-0-p11605.html?&trstct=pos_0&nbc=1) |
 
 
 
