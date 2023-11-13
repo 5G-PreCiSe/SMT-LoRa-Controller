@@ -2,7 +2,7 @@
 This repository contains the hardware documentation for an ESP32-based LoRaWAN controller unit that can be connected to SMT100 soil moisture sensors via RS485. 
 
 ## Features
-- LoRa connectivity (OTAA Class A) for continous soil moisture and temperature monitoring
+- LoRa connectivity (OTAA Class A) for continuous soil moisture and temperature monitoring
 - Operates up to eight SMT100 sensors connected via RS485
 - Designed for outdoor application in harsh environments
 - Integrated rechargeable battery with (optional) solar panel for autonomous operation
@@ -13,6 +13,7 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 ![image-info](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/image_2023-10-27_210926035.png)
 
 ## Parts List:
+The following table lists all parts that are required for one controller unit, which can operate up to eight SMT100 RS485 ASCII sensors. 
 | Qty | Part | Link |
 | --- | ---- | ---- | 
 | 1 | SMT100-LoRa-v0.9 PCB | [see PCB](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/pcb/5G-PreCiSe-SMT100_2023-10-27.json) |
