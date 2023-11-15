@@ -40,8 +40,8 @@ The following table lists all parts that are required for one controller unit, w
 | 1 | IP65 enclosure (6U07121206437) | [Reichelt](https://www.reichelt.de/industriegehaeuse-119-8-x-119-8-x-60-1mm-ip65-lichtgrau-6u07121206437-p340530.html?CCOUNTRY=445&LANGUAGE=de&trstct=pos_0&nbc=1&&r=1) |
 | 1 | Pressure compensation element | [Reichelt](https://www.reichelt.de/druckausgleichselement-bis-ip-69-dae-m12-9005-p345132.html?&trstct=pos_0&nbc=1) |
 | 1-2 | M16x1,5 cable gland | [Reichelt](https://www.reichelt.de/de/de/kabelverschraubung-5-10mm-m16x1-5-sw-h-p-eco-50011-p317603.html?CCOUNTRY=445&LANGUAGE=en&GROUPID=7740&START=0&OFFSET=16&SID=96d7a34ab3182b0141f212f568cc687297c3f76e34df35ef2bfdb&LANGUAGE=DE&&r=1) |
-| 1 | 3D printed bracket | |
-| 4 | 6-32 (PC) screw | [Reichelt] (https://www.reichelt.de/pc-montageschrauben-6-32x1-4-unc-50-stueck-st-screw6-32-p190895.html) |
+| 1 | 3D printed bracket | [see 3D printed parts] |
+| 4 | 6-32 (PC) screw | [Reichelt](https://www.reichelt.de/pc-montageschrauben-6-32x1-4-unc-50-stueck-st-screw6-32-p190895.html) |
 | 1 | 680 mAh Li-Ion battery, 14500, 3,7 V | [Reichelt](https://www.reichelt.de/industriezelle-14500-3-7-v-680-mah-ungeschuetzt-1er-pack-son-14500-vr2-p284878.html?CCOUNTRY=445&LANGUAGE=de&trstct=pos_0&nbc=1&&r=1) |
 
 
