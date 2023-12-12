@@ -45,7 +45,7 @@ The following table lists all parts that are required for one controller unit, w
 | 1* | 680 mAh Li-Ion battery, 14500, 3.7 V | [Reichelt](https://www.reichelt.de/industriezelle-14500-3-7-v-680-mah-ungeschuetzt-1er-pack-son-14500-vr2-p284878.html?CCOUNTRY=445&LANGUAGE=de&trstct=pos_0&nbc=1&&r=1) |
 | 1* | 2500 mAh Li-Ion battery, 785060, 3.7 V | [Welectron](https://www.welectron.com/LiPo-Flachakku-785060-37V-2500mAh) | 
 
-* A 680 mAh or a 2500 mAh Li-Ion battery can be used.
+\* A 680 mAh or a 2500 mAh Li-Ion battery can be used.
 
 
 
