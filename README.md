@@ -12,6 +12,9 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 
 ![image-info](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/image_2023-10-27_210926035.png)
 
+## Components & Wiring
+![Components & Wiring](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/SMT100-Board.JPG)
+
 ## Parts List:
 The following table lists all parts that are required for one controller unit, which can operate up to eight SMT100 RS485 ASCII sensors. 
 | Qty | Part | Link |
