@@ -50,6 +50,9 @@ The following table lists all parts that are required for one controller unit, w
 
 \* We suggest that either a 680 mAh or a 2500 mAh Li-Ion battery be used.
 
+## Experimental Setup
+As part of the [5G-PreCiSe Project] (https://www.5g-precise.de), we deployed eight controller units on agricultural land in southwest Germany. A Milesight UG67 outdoor LoRaWAN gateway realized the LoRa connectivity and forwarded measurements to an Nvidia DGX A100 server, where the data were processed.
+The payload decoder that we installed on the Milesight gateway is contained in this repository (see [PayloadDecoder.js](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/lora/PayloadDecoder.js)).
 
 
 
