@@ -15,7 +15,7 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 ## Components & Wiring:
 ![Components & Wiring](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/SMT100-Board.JPG)
 ### Jumper 1 & 2:
-The SMT LoRa Controller supports two working modes. In normal mode, the controller reads the connected SMT100 sensors and transmits measurements either via LoRa or WiFi/MQTT. The config mode, in constrast, allows one to configure the controller over a Web API. In this mode, the controller either acts as a WiFi client and connects to a station or it opens an access point. You can select the prefered mode by setting JP1. Use JP2 to set the connectivity behaviour.
+The SMT LoRa Controller supports two working modes: In normal mode, the controller reads the connected SMT100 sensors and transmits measurements via LoRa or WiFi/MQTT. The config mode, in contrast, allows one to configure the controller over a Web API. In this mode, the controller either acts as a WiFi client and connects to a station or opens an access point. You can select the preferred mode by setting JP1. Use JP2 to set the connectivity behavior.
 | JP1 | JP2 |  Mode | Connectivity |
 | --- | --- | --- | --- |
 | open | open | Normal mode | LoRa |
