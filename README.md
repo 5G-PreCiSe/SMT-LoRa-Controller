@@ -13,7 +13,7 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 ![image-info](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/image_2023-10-27_210926035.png)
 
 ## Working Modes:
-The SMT LoRa Controller supports two different modes of operation. By opening or closing ```JP1```, you can either put the controller into ```Cyclic On``` or ```Permanent On``` mode: 
+The SMT LoRa Controller supports two different modes of operation. By opening or closing ```JP1```, you can either enable a battery-friendly power saving mode or select the permanent on mode:
 
 ### Power Saving Mode:
 The power saving mode is the preferred mode for a controller that is powered by the integrated battery and, optionally, a solar panel but has no additional external power supply.
@@ -21,7 +21,7 @@ In this battery-friendly power saving mode, the controller enters deep sleep aft
 The recommended means for transmitting data in this mode is LoRa. Nevertheless, transmission via WiFi/MQTT is also supported and can be optionally enabled (either in addition to or instead of LoRa transmission). 
 
 ### Permanent On Mode:
-Like in power saving mode, the controller collects and transmits sensory data periodically. However, in contrast to the other mode, the controller stays online between two processing cycles. Additionally, if enabled, the controller exposes its built-in Web and MQTT API over WiFi. For stable operations, the controller must be powered with an external power in this mode.
+Like in power saving mode, the controller periodically collects and transmits sensory data, either via LoRa, WiFi/MQTT, or both. However, in contrast to the other mode, the controller stays online between two processing cycles. Additionally, if WiFi is enabled, the controller exposes its built-in Web and MQTT API. In this mode, the controller must be powered with an external power supply for stable operations. You may use this mode, for the intial configuration of your controller.
 
 ## Components & Wiring:
 ![Components & Wiring](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/SMT100-Board.JPG)
