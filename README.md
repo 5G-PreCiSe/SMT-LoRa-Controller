@@ -12,6 +12,16 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 
 ![image-info](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/image_2023-10-27_210926035.png)
 
+## Working Modes:
+The SMT LoRa Controller supports two different modes of operation. By opening or closing ```JP1```, you can either put the controller into ```Cyclic On``` or ```Permanent On``` mode: 
+
+### Cyclic On:
+The ```Cyclic On``` mode is the preferred mode for a controller that is powered over the integrated battery (with or without a solar panel) but has no additional external power supply.
+Instead of being online permanently, the controller goes to hardware deep sleep after reading the connected SMT100 sensors and transmitting measurements via LoRa or WiFi to the backend. After a configurable period, the controller wakes up, and the process of collecting soil data starts again.
+
+### Permanent On:
+Like the ```Cyclic On``` mode, the controller collects and transmits sensory data periodically. However, in contrast to the other mode, it stays online between two processing cycles. Additionally, if enabled, the controller exposes its built-in Web and MQTT API over WiFi. For stable operations, it is recommended that the controller be powered with an external power supply in this mode. 
+
 ## Components & Wiring:
 ![Components & Wiring](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/SMT100-Board.JPG)
 ### SMT100 Wiring:
