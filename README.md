@@ -15,12 +15,13 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 ## Working Modes:
 The SMT LoRa Controller supports two different modes of operation. By opening or closing ```JP1```, you can either put the controller into ```Cyclic On``` or ```Permanent On``` mode: 
 
-### Cyclic On:
-The ```Cyclic On``` mode is the preferred mode for a controller that is powered over the integrated battery (with or without a solar panel) but has no additional external power supply.
-Instead of being online permanently, the controller goes to hardware deep sleep after reading the connected SMT100 sensors and transmitting measurements via LoRa or WiFi to the backend. After a configurable period, the controller wakes up, and the process of collecting soil data starts again.
+### Power Saving Mode:
+The power saving mode is the preferred mode for a controller that is powered by the integrated battery and, optionally, a solar panel but has no additional external power supply.
+In this battery-friendly power saving mode, the controller enters deep sleep after reading the connected SMT100 sensors and transmitting measurements. After a configurable duration, the controller wakes up from deep sleep, and starts collecting soil data again.
+The recommended means for transmitting data in this mode is LoRa. Nevertheless, transmission via WiFi/MQTT is also supported and can be optionally enabled (either in addition to or instead of LoRa transmission). 
 
-### Permanent On:
-Like the ```Cyclic On``` mode, the controller collects and transmits sensory data periodically. However, in contrast to the other mode, it stays online between two processing cycles. Additionally, if enabled, the controller exposes its built-in Web and MQTT API over WiFi. For stable operations, it is recommended that the controller be powered with an external power supply in this mode. 
+### Permanent On Mode:
+Like in power saving mode, the controller collects and transmits sensory data periodically. However, in contrast to the other mode, the controller stays online between two processing cycles. Additionally, if enabled, the controller exposes its built-in Web and MQTT API over WiFi. For stable operations, the controller must be powered with an external power in this mode.
 
 ## Components & Wiring:
 ![Components & Wiring](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/SMT100-Board.JPG)
