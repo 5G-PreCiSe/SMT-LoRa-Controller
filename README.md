@@ -30,17 +30,21 @@ The controller board is equipped with two RS485 terminals for wiring SMT100 sens
 Moreover, you can connect multiple sensors to the same terminal.
 
 ### Buttons & Jumpers:
-The SMT LoRa Controller supports two working modes: In normal mode, the controller reads the connected SMT100 sensors, transmits measurements via LoRa or WiFi/MQTT, goes to deep sleep, and wakes up after a configurable period. The config mode, in contrast, allows one to configure the controller over a Web API. In this mode, the controller either acts as a WiFi client and connects to a station or opens an access point. You can select the preferred mode by setting ```JP1```. Use ```JP2``` to set the connectivity behavior.
+You can select your preferred working mode by setting ```JP1```. Use ```JP2``` to set the connectivity behaviour of your controller:
+In power saving mode, you can enable WiFi. If enabled, the controller will act as a WiFi client and connect to a station (router) specified in configuration. Moreover, over the configuraton you can specify whether measurements should be transmitted via LoRa, WiFi/MQTT, or both.
+In permanent on mode, the controller can either act as a WiFi client and connect to a station, or it opens an access point. Note that the connectivity behaviour in this mode can be overwritten by the network configuration. Make sure to set ```mode``` in the network configuration to ```3```, if you want to set the connectivity behavior by ```JP2```.
+
 | JP1 | JP2 |  Mode | Connectivity |
 | --- | --- | --- | --- |
 | open | open | Normal mode | LoRa |
-| open | closed | Normal mode | WiFi client |
-| closed | open | Config mode | WiFi access point* |
-| closed | closed | Config mode | WiFi client* |
+| open | closed | Normal mode | LoRa & WiFi client |
+| closed | open | Config mode | LoRa & WiFi access point* |
+| closed | closed | Config mode | LoRa & WiFi client* |
 
-*Note: The connectivity behavior in config mode can be overwritten by network configuration. Make sure to set ```mode``` in the network configuration to ```3```, if you want to set the connectivity behavior by ```JP2```.
+*Note: The connectivity behavior in permanent on mode can be overwritten by network configuration. 
 
-To exit the config mode, open ```JP1``` and press the ```RST``` button. The controller will reboot and proceed in normal mode. To switch from normal to config mode, close ```JP1``` and press the ```RST``` button. Alternatively, if you require the controller to be in config mode only once, press ```SW``` (without changing ```JP1```) while being in normal mode or deep sleep. The controller will wake up and switch to config mode.
+To switch from one mode to the other or change the connectivity behavior, change the jumper configuration and press the ```RST``` button afterwards.
+If you want to switch from power saving mode to permanent on mode only once, e.g., for the purpose of changing the configuration of your controller, press ```SW``` (without changing ```JP1```) while being in power saving mode. The controller will wake up and switch to permanent mode. After finish the configuration of your controller, press ```RST``` to switch back to power saving mode.
 
 ## Parts List:
 The following table lists all parts that are required for one controller unit, which can operate up to eight SMT100 RS485 ASCII sensors. 
