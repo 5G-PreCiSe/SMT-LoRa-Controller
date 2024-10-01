@@ -12,11 +12,11 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 
 ![image-info](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/image_2023-10-27_210926035.png)
 
-## Working Modes:
+## Operation Modes:
 The SMT LoRa Controller supports two different modes of operation. By opening or closing ```JP1```, you can either enable a battery-friendly power saving mode or select the permanent on mode:
 
 ### Power Saving Mode:
-The power saving mode is the preferred mode for a controller that is powered by the integrated battery and, optionally, a solar panel but has no additional external power supply.
+The power saving mode is the preferred operation mode for a controller that is powered by the integrated battery and, optionally, a solar panel but has no additional external power supply.
 In this battery-friendly power saving mode, the controller enters deep sleep after reading the connected SMT100 sensors and transmitting measurements. After a configurable duration, the controller wakes up from deep sleep, and starts collecting soil data again.
 The recommended means for transmitting data in this mode is LoRa. Nevertheless, transmission via WiFi/MQTT is also supported and can be optionally enabled (either in addition to or instead of LoRa transmission). 
 
@@ -30,9 +30,9 @@ The controller board is equipped with two RS485 terminals for wiring SMT100 sens
 Moreover, you can connect multiple sensors to the same terminal.
 
 ### Buttons & Jumpers:
-You can select your preferred working mode by setting ```JP1```. Use ```JP2``` to set the connectivity behaviour of your controller:
+You can select your preferred operation mode by setting ```JP1```. Use ```JP2``` to set the connectivity mode of your controller:
 In power saving mode, you can enable WiFi. If enabled, the controller will act as a WiFi client and connect to a station (router) specified in configuration. Moreover, over the configuraton you can specify whether measurements should be transmitted via LoRa, WiFi/MQTT, or both.
-In permanent on mode, the controller can either act as a WiFi client and connect to a station, or it opens an access point. Note that the connectivity behaviour in this mode can be overwritten by the network configuration. Make sure to set ```mode``` in the network configuration to ```3```, if you want to set the connectivity behavior by ```JP2```.
+In permanent on mode, the controller can either act as a WiFi client and connect to a station, or it opens an access point. Note that the connectivity mode in this operation mode can be overwritten by the network configuration. Make sure to set ```mode``` in the network configuration to ```3```, if you want to set the connectivity mode by ```JP2```.
 
 | JP1 | JP2 |  Mode | Connectivity |
 | --- | --- | --- | --- |
@@ -41,10 +41,10 @@ In permanent on mode, the controller can either act as a WiFi client and connect
 | closed | open | Config mode | LoRa & WiFi access point* |
 | closed | closed | Config mode | LoRa & WiFi client* |
 
-*Note: The connectivity behavior in permanent on mode can be overwritten by network configuration. 
+*Note: The connectivity mode in permanent on mode can be overwritten by network configuration. 
 
-To switch from one mode to the other or change the connectivity behavior, change the jumper configuration and press the ```RST``` button afterwards.
-If you want to switch from power saving mode to permanent on mode only once, e.g., for the purpose of changing the configuration of your controller, press ```SW``` (without changing ```JP1```) while being in power saving mode. The controller will wake up and switch to permanent mode. After finish the configuration of your controller, press ```RST``` to switch back to power saving mode.
+To switch from one operation mode to the other or change the connectivity mode, change the jumper configuration and press the ```RST``` button afterwards.
+If you want to switch from power saving mode to permanent on mode only once, e.g., for the purpose of accessing the controller's Web API for changing the configuration, press ```SW``` (without changing ```JP1```) while being in power saving mode. The controller will wake up and switch to permanent mode. To switch back to power saving mode, press ```RST```.
 
 ## Parts List:
 The following table lists all parts that are required for one controller unit, which can operate up to eight SMT100 RS485 ASCII sensors. 
