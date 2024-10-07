@@ -7,7 +7,7 @@ This repository contains the hardware documentation for an ESP32-based LoRaWAN c
 - Designed for outdoor application in harsh environments
 - Integrated rechargeable battery with (optional) solar panel for autonomous operation
 - Low power consumption due to hardware deep sleep
-- Fully configurable through WiFi and HTTP
+- Fully configurable through WiFi and HTTP (see [OpenAPI.yaml](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/OpenAPI.yaml))
 - Low maintenance
 
 ![image-info](https://github.com/5G-PreCiSe/SMT-LoRa-Controller/blob/main/images/image_2023-10-27_210926035.png)
