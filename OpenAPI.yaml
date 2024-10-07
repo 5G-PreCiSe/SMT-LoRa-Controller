@@ -1,0 +1,917 @@
+openapi: '3.0.2'
+info:
+  title: Web API for SMT LoRa Controller
+  version: '1.0'
+servers:
+  - url: http://192.168.4.1/
+
+tags:
+- name: Entry Point
+- name: Status
+- name: Measurements
+- name: Configuration
+  description: This section contains endpoints for querying and modifying the controller's configuration. 
+               The entire configuration is sub divided into multiple logical groups, and each group is represented by a single resource document. 
+               You can modify the controller's configuration by overwriting the configuration parameters of a group by using ```PUT```, e.g., ```PUT /configuration/wifi``` to modify WiFi settings.
+               Note that any modifications won't get active until the next reboot of the controller. After completing all modifications, you have to save the changes using ```POST /configuration``` and then reboot the controller. 
+- name: Active Configuration
+  description: This sections contains endpoints for querying the controller's configuration that is currently active. Note that the active configuration cannot be modified directly. Instead, you can update the controller's configuration by overwriting the parameters of a sub resource of ```/configuration``` with ```PUT```.
+               Afterward, make sure to save the changes using ```POST /configuration``` and reboot the controller. The changes become active after rebooting the controller.
+- name: Reboot
+- name: RS485
+- name: Firmware Update
+
+paths:
+  /:
+    get:
+      tags: 
+      - Entry Point
+      summary: Endpoint serving as entry point for this API
+      description: Returns a collection of links to all relevant endpoints. This endpoint serves as an entry point for this API.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.hypermedia.v1+json:
+              schema:
+                $ref: '#/components/schemas/hypermedia'
+  /status:
+    get:
+      tags:
+      - Status
+      summary: Returns the controller's status
+      description: Returns the status of the controller, including the number of free bytes on the heap, the device ID, the hostname, and the last restart reason for each CPU.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.status.v1+json:
+              schema:
+                $ref: '#/components/schemas/status'
+  /configuration:
+    get:
+      tags:
+      - Configuration
+      summary: Lists all sub resources of the controller's configuration. 
+      description: Returns a collection of links to the sub resources of the controller's configuration.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.hypermedia.v1+json:
+              schema:
+                $ref: '#/components/schemas/hypermedia'
+    post:
+      tags:
+      - Configuration
+      summary: Saves changes
+      description: Stores all changes made to the controller's configuration on the file system.
+      responses:
+        '200':
+          description: OK
+
+  /active-configuration:
+    get:
+      tags:
+      - Active Configuration
+      summary: Lists all sub resources of the controller's active configuration.
+      description: Returns a collection of links to the sub resources of the controller's active configuration.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.hypermedia.v1+json:
+              schema:
+                $ref: '#/components/schemas/hypermedia'
+  /measurements:
+    get:
+      tags:
+      - Measurements
+      summary: Returns the last measurements
+      description: Returns a list of last measurements - one for each SMT100 sensor unit.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.measurements.v1+json:
+              schema:
+                $ref: '#/components/schemas/measurments'
+  /rs485:
+    post:
+      tags:
+      - RS485
+      summary: Sets the address of a connected SMT100 sensor
+      description: Overwrites the address of a connected SMT100 sensor. Make sure that only one sensor is connected to the controller when executing this command.
+      requestBody:
+        content:
+          application/vnd.5g-precise.smt100-lora.rs485-cmd.v1+json:
+            schema:
+              $ref: '#/components/schemas/cmd'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid command or invalid/missing payload
+  /reboot:
+    post:
+      tags:
+      - Reboot
+      summary: Reboots the controller
+      description: Reboots the controller. If you have changed the controller's configuration over this Web API, make sure to save changes (```POST /configuration```) before executing this command.
+      responses:
+        '200':
+          description: OK
+  /firmware-update:
+    post:
+      tags:
+      - Firmware Update
+      summary: Updates the controller's firmware
+      description: Flashes the controller's firmware using over-the-air (OTA) update
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+              description: Firmware file
+      responses:
+        '302':
+          description: Please wait while the device reboots
+  /filesystem-update:
+    post:
+      tags:
+      - Firmware Update
+      summary: Updates the controller's file system
+      description: Flashes the controller's file system using over-the-air (OTA) update
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+              description: File system image
+      responses:
+        '302':
+          description: Please wait while the device reboots
+  /configuration/wifi:
+    get:
+      tags:
+      - Configuration
+      summary: Returns the controller's WiFi configuration
+      description: Returns the controller's WiFi configuration. Note that this configuration is a copy of the currently active WiFi configuration. You can modify the controller's WiFi configuration with ```PUT /configuration/wifi``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.wifi-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/wifiConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+    put:
+      tags:
+        - Configuration
+      summary: Changes the controller's WiFi configuration
+      description: Modifies the controller's WiFi configuration. Note that any changes to the WiFi configuration won't get active until the next reboot of the controller. Make sure to execute ```POST /configuration``` to save changes before rebooting the controller.
+      requestBody:
+        content:
+          application/vnd.5g-precise.smt100-lora.wifi-config.v1+json:
+            schema:
+              $ref: '#/components/schemas/wifiConfig'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.wifi-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/wifiConfig'
+                  - $ref: '#/components/schemas/hypermedia'  
+  /configuration/logger:
+    get:
+      tags:
+      - Configuration
+      summary: Returns the controller's logger configuration
+      description: Returns the controller's logger configuration. Note that this configuration is a copy of the currently active logger configuration. You can modify the controller's logger configuration with ```PUT /configuration/logger``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.logger-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/loggerConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+    put:
+      tags:
+        - Configuration
+      summary: Changes the controller's logger configuration
+      description: Modifies the controller's logger configuration. Note that any changes to the logger configuration won't get active until the next reboot of the controller. Make sure to execute ```POST /configuration``` to save changes before rebooting the controller.
+      requestBody:
+        content:
+          application/vnd.5g-precise.smt100-lora.logger-config.v1+json:
+            schema:
+              $ref: '#/components/schemas/loggerConfig'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.logger-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/loggerConfig'
+                  - $ref: '#/components/schemas/hypermedia'  
+  /configuration/led:
+    get:
+      tags:
+      - Configuration
+      summary: Returns the controller's LED configuration
+      description: Returns the controller's LED configuration. Note that this configuration is a copy of the currently active LED configuration. You can modify the controller's LED configuration with ```PUT /configuration/led``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.led-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ledConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+    put:
+      tags:
+        - Configuration
+      summary: Changes the controller's LED configuration
+      description: Modifies the controller's LED configuration. Note that any changes to the LED configuration won't get active until the next reboot of the controller. Make sure to execute ```POST /configuration``` to save changes before rebooting the controller.
+      requestBody:
+        content:
+          application/vnd.5g-precise.smt100-lora.led-config.v1+json:
+            schema:
+              $ref: '#/components/schemas/ledConfig'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.led-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ledConfig'
+                  - $ref: '#/components/schemas/hypermedia' 
+  /configuration/smt:
+    get:
+      tags:
+      - Configuration
+      summary: Returns the controller's SMT100 sensor configuration
+      description: Returns the controller's SMT100 sensor configuration. Note that this configuration is a copy of the currently active SMT100 sensor configuration. You can modify the controller's SMT100 sensor configuration with ```PUT /configuration/led``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.smt-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/smtConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+    put:
+      tags:
+        - Configuration
+      summary: Changes the controller's SMT100 sensor configuration
+      description: Modifies the controller's SMT100 sensor configuration. Note that any changes to the SMT100 sensor configuration won't get active until the next reboot of the controller. Make sure to execute ```POST /configuration``` to save changes before rebooting the controller.
+      requestBody:
+        content:
+          application/vnd.5g-precise.smt100-lora.smt-config.v1+json:
+            schema:
+              $ref: '#/components/schemas/smtConfig'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.smt-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/smtConfig'
+                  - $ref: '#/components/schemas/hypermedia' 
+  /configuration/lora:
+    get:
+      tags:
+      - Configuration
+      summary: Returns the controller's LoRa configuration
+      description: Returns the controller's LoRa configuration. Note that this configuration is a copy of the currently active LoRa configuration. You can modify the controller's LoRa configuration with ```PUT /configuration/lora``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.lora-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/loraConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+    put:
+      tags:
+        - Configuration
+      summary: Changes the controller's LoRa configuration
+      description: Modifies the controller's LoRa configuration. Note that any changes to the LoRa configuration won't get active until the next reboot of the controller. Make sure to execute ```POST /configuration``` to save changes before rebooting the controller.
+      requestBody:
+        content:
+          application/vnd.5g-precise.smt100-lora.lora-config.v1+json:
+            schema:
+              $ref: '#/components/schemas/loraConfig'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.lora-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/loraConfig'
+                  - $ref: '#/components/schemas/hypermedia' 
+  /configuration/device:
+    get:
+      tags:
+      - Configuration
+      summary: Returns the controller's device configuration
+      description: Returns the controller's device configuration. Note that this configuration is a copy of the currently active device configuration. You can modify the controller's device configuration with ```PUT /configuration/device``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.device-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/deviceConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+    put:
+      tags:
+        - Configuration
+      summary: Changes the controller's device configuration
+      description: Modifies the controller's device configuration. Note that any changes to the device configuration won't get active until the next reboot of the controller. Make sure to execute ```POST /configuration``` to save changes before rebooting the controller.
+      requestBody:
+        content:
+          application/vnd.5g-precise.smt100-lora.device-config.v1+json:
+            schema:
+              $ref: '#/components/schemas/deviceConfig'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.device-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/deviceConfig'
+                  - $ref: '#/components/schemas/hypermedia' 
+  /configuration/mqtt:
+    get:
+      tags:
+      - Configuration
+      summary: Returns the controller's MQTT configuration
+      description: Returns the controller's MQTT configuration. Note that this configuration is a copy of the currently active MQTT configuration. You can modify the controller's MQTT configuration with ```PUT /configuration/mqtt``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.mqtt-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/mqttConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+    put:
+      tags:
+        - Configuration
+      summary: Changes the controller's MQTT configuration
+      description: Modifies the controller's MQTT configuration. Note that any changes to the MQTT configuration won't get active until the next reboot of the controller. Make sure to execute ```POST /configuration``` to save changes before rebooting the controller.
+      requestBody:
+        content:
+          application/vnd.5g-precise.smt100-lora.mqtt-config.v1+json:
+            schema:
+              $ref: '#/components/schemas/mqttConfig'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.mqtt-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/mqttConfig'
+                  - $ref: '#/components/schemas/hypermedia' 
+  /configuration/web:
+    get:
+      tags:
+      - Configuration
+      summary: Returns the controller's Web API configuration
+      description: Returns the controller's Web API configuration. Note that this configuration is a copy of the currently active Web API configuration. You can modify the controller's Web configuration with ```PUT /configuration/web``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.web-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/webConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+    put:
+      tags:
+        - Configuration
+      summary: Changes the controller's Web API configuration
+      description: Modifies the controller's Web API configuration. Note that any changes to the Web API configuration won't get active until the next reboot of the controller. Make sure to execute ```POST /configuration``` to save changes before rebooting the controller.
+      requestBody:
+        content:
+          application/vnd.5g-precise.smt100-lora.web-config.v1+json:
+            schema:
+              $ref: '#/components/schemas/webConfig'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.web-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/webConfig'
+                  - $ref: '#/components/schemas/hypermedia' 
+  /active-configuration/wifi:
+    get:
+      tags:
+      - Active Configuration
+      summary: Returns the controller's active WiFi configuration
+      description: Returns the controller's WiFi configuration that is currently active. You can modify the controller's WiFi configuration with ```PUT /configuration/wifi``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.wifi-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/wifiConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+  /active-configuration/logger:
+    get:
+      tags:
+      - Configuration
+      summary: Returns the controller's active logger configuration
+      description: Returns the controller's logger configuration that is currently active. You can modify the controller's logger configuration with ```PUT /configuration/logger``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.logger-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/loggerConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+  /active-configuration/led:
+    get:
+      tags:
+      - Active Configuration
+      summary: Returns the controller's active LED configuration
+      description: Returns the controller's LED configuration that is currently active. You can modify the controller's LED configuration with ```PUT /configuration/led``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.led-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ledConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+  /active-configuration/smt:
+    get:
+      tags:
+      - Active Configuration
+      summary: Returns the controller's active SMT100 sensor configuration
+      description: Returns the controller's SMT100 sensor configuration that is currently active. You can modify the controller's SMT100 sensor configuration with ```PUT /configuration/led``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.smt-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/smtConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+  /active-configuration/lora:
+    get:
+      tags:
+      - Active Configuration
+      summary: Returns the controller's active LoRa configuration
+      description: Returns the controller's LoRa configuration that is currently active. You can modify the controller's LoRa configuration with ```PUT /configuration/lora``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.lora-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/loraConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+  /active-configuration/device:
+    get:
+      tags:
+      - Active Configuration
+      summary: Returns the controller's active device configuration
+      description: Returns the controller's device configuration that is currently active. You can modify the controller's device configuration with ```PUT /configuration/device``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.device-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/deviceConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+  /active-configuration/mqtt:
+    get:
+      tags:
+      - Active Configuration
+      summary: Returns the controller's active MQTT configuration
+      description: Returns the controller's MQTT configuration that is currently active. You can modify the controller's MQTT configuration with ```PUT /configuration/mqtt``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.mqtt-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/mqttConfig'
+                  - $ref: '#/components/schemas/hypermedia'         
+  /active-configuration/web:
+    get:
+      tags:
+      - Active Configuration
+      summary: Returns the controller's active Web configuration
+      description: Returns the controller's Web configuration that is currently active. You can modify the controller's Web configuration with ```PUT /configuration/web``` and afterward save changes using ```POST /configuration``` so that changed configuration parameters are stored on the controller's file system and become active after the next reboot.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.5g-precise.smt100-lora.web-config.v1+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/webConfig'
+                  - $ref: '#/components/schemas/hypermedia'
+        
+
+components:
+  schemas:
+      measurments:
+        type: object
+        properties:
+          deviceId:
+            type: string
+            example: myController
+            description: "The configured device identifier of the controller (see device config)"
+          measurements:
+            type: array
+            description: "List of last measurements - one for each SMT100 sensor unit"
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                  example: "AABBCC"
+                  description: "Six-digit hexadecimal address of the SMT100 sensor unit"
+                temperature:
+                  type: number
+                  format: float
+                  example: 14.53
+                  description: "Measured soil temperature. This value might be '0.0' if temperature could not be read (check the 'isTemperatureValid' property)."
+                permittivity:
+                  type: number
+                  format: float
+                  description: "Measured permittivity. This value might be '0.0' if permittivity could not be read (check the 'isPermittivityValid' property)."
+                waterContent:
+                  type: number
+                  format: float
+                  minimum: 0
+                  maximum: 100
+                  example: 66.67
+                  description: "Measured water content. This value might be '0.0' if water content could not be read (check the 'isWaterContentValid' property)."
+                counts:
+                  type: integer
+                  format: int32
+                  description: "Measured counts. This value might be '0' if counts could not be read (check the 'isCountValid' property)."
+                firmwareVersion:
+                  type: string
+                  example: "V1.48"
+                  description: "Transmitted identifier of the firmware version of the SMT100 sensor unit"
+                start:
+                  type: integer
+                  format: int64
+                  description: "Span in milliseconds between the point of time when the controller has booted and the start of the measurement"
+                end:
+                  type: integer
+                  format: int64
+                  description: "Span in milliseconds between the point of time when the controller has booted and the end of the measurement"
+                isUnknownSensor:
+                  type: boolean
+                  description: "This flag is true if the sensor could not be read due to issues with the sensor's address. Check whether the address is set and valid, and the sensor unit is physcially connected to the controller."
+                isTemperatureValid:
+                  type: boolean
+                  description: "This flag is true if soil temperature could be read successfully, which means that the returned soil temperature is valid. The flag is false if: (1) measuring soil temperature has been disabled for this sensor unit; (2) the sensor did not report the requested value in time (even after a configurable number of retries); (3) there was an issue with the sensor's address."
+                isPermittivityValid:
+                  type: boolean
+                  description: "This flag is true if permittivity could be read successfully, which means that the returned permittivity is valid. The flag is false if: (1) measuring permittivity has been disabled for this sensor unit; (2) the sensor did not report the requested value in time (even after a configurable number of retries); (3) there was an issue with the sensor's address."
+                isWaterContentValid:
+                  type: boolean
+                  description: "This flag is true if water content could be read successfully, which means that the returned water content is valid. The flag is false if: (1) measuring water content has been disabled for this sensor unit; (2) the sensor did not report the requested value in time (even after a configurable number of retries); (3) there was an issue with the sensor's address."
+                isCountValid:
+                  type: boolean
+                  description: "This flag is true if counts could be read successfully, which means that the returned counts is valid. The flag is false if: (1) measuring counts has been disabled for this sensor unit; (2) the sensor did not report the requested value in time (even after a configurable number of retries); (3) there was an issue with the sensor's address."
+                isFirmwareValid:
+                  type: boolean
+                  description: "This flag is true if the firmware version key could be read successfully, which means that the returned firmware version key is valid. The flag is false if: (1) reading the firmware version key has been disabled for this sensor unit; (2) the sensor did not report the requested value in time (even after a configurable number of retries); (3) there was an issue with the sensor's address."
+                _links:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/hyperlink'
+      status:
+        type: object
+        properties:
+          deviceId:
+            type: string
+            example: myController
+            description: "The configured device identifier of the controller (see device config)"
+          hostname:
+            type: string
+            example: my-smt-controller
+            description: "The configured hostname of the controller (see WiFi config)"
+          freeHeap:
+            type: integer
+            description: "The number of free bytes on the heap"
+          restart_reason_cpu_0:
+            type: integer
+            enum: [0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+            description: "Key of the last reset reason for CPU 0. Known keys are: NO_MEAN (0), POWERON_RESET (1), SW_RESET (3), OWDT_RESET (4), DEEPSLEEP_RESET (5), SDIO_RESET (6), TG0WDT_SYS_RESET (7), TG1WDT_SYS_RESET (8), RTCWDT_SYS_RESET (9), INTRUSION_RESET (10), TGWDT_CPU_RESET (11), SW_CPU_RESET (12), RTCWDT_CPU_RESET (13), EXT_CPU_RESET (14), RTCWDT_BROWN_OUT_RESET (15), and RTCWDT_RTC_RESET (16)"
+          restart_reason_cpu_1:
+            type: integer
+            enum: [0,1,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+            description: "Key of the last reset reason for CPU 1. Known keys are: NO_MEAN (0), POWERON_RESET (1), SW_RESET (3), OWDT_RESET (4), DEEPSLEEP_RESET (5), SDIO_RESET (6), TG0WDT_SYS_RESET (7), TG1WDT_SYS_RESET (8), RTCWDT_SYS_RESET (9), INTRUSION_RESET (10), TGWDT_CPU_RESET (11), SW_CPU_RESET (12), RTCWDT_CPU_RESET (13), EXT_CPU_RESET (14), RTCWDT_BROWN_OUT_RESET (15), and RTCWDT_RTC_RESET (16)"
+          _links:
+            type: array
+            items:
+              $ref: '#/components/schemas/hyperlink'
+      cmd:
+        type: object
+        properties:
+          cmd:
+            type: string
+            enum:
+              - set_address
+            description: "The command: use 'set_address' to the set the address of a connected sensor"
+          arg:
+            type: string
+            example: "10AABB"
+            description: "The command's argument, e.g., the RS485 address that should be set"
+      loggerConfig:
+        type: object
+        properties:
+          enabled:
+            type: boolean
+            default: false
+            description: "If true, the controller send logs to the specified remote server via UDP"
+          targetAddress:
+            type: string
+            example: 10.0.1.20
+            description: "IP address or FQDN of the remote logging server"
+          targetPort:
+            type: integer
+            minimum: 1
+            maximum: 49151
+            default: 5514
+            example: 5514
+            description: "UDP port of the remote logging server"
+          serialPrintEnabled:
+            type: boolean
+            default: false
+            description: "If true, logs that are sent to the remote server will be also printed to serial"
+      ledConfig:
+        type: object
+        properties:
+          enabled:
+            type: boolean
+            default: true
+            description: "If true, the online status is visualized over the built-in LED. If false, the LED is permanently off."
+      smtConfig:
+        type: object
+        properties:
+          sensors:
+            type: array
+            description: "List of SMT100 sensors assigned to this controller"
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                  example: "AABBCC"
+                  description: "Six-digit hexadecimal address of the SMT100 sensor unit"
+                measureTemperature:
+                  type: boolean
+                  default: true
+                  description: "If true, temperature is read from this SMT100 sensor unit and published"
+                measurePermittivity:
+                  type: boolean
+                  default: true
+                  description: "If true, permittivity is read from this SMT100 sensor unit and published"
+                measureWaterContent:
+                  type: boolean
+                  default: true
+                  description: "If true, water content is read from this SMT100 sensor unit and published"
+                measureCounts:
+                  type: boolean
+                  default: true
+                  description: "If true, counts are read from this SMT100 sensor unit and published"
+          measurementRetries:
+            type: integer
+            example: 3
+            default: 3
+            description: "Number of retries when reading sensory value"
+      loraConfig:
+        type: object
+        properties:
+          isAppEuiLittleEndian:
+            type: boolean
+            default: true
+            description: "If true, the 'AppEUI' is in little endian format"
+          isDevEuiLittleEndian:
+            type: boolean
+            default: true
+            description: "If true, the 'DevEUI' is in little endian format"
+          isAppKeyBigEndian:
+            type: boolean
+            default: true
+            description: "If true, the 'AppKey' is in big endian format"
+          appEui:
+            type: string
+            example: "54B2D57F21BBA00"
+            description: "The AppEUI"
+          devEui:
+            type: string
+            example: "54B2D57F21637E0"
+            description: "The DevEUI"
+          appKey:
+            type: string
+            example: "48FD2498AEBC33290D87632DF83A1249"
+            description: "The AppKey"
+      deviceConfig:
+        type: object
+        properties:
+          deviceId:
+            type: string
+            example: "myController"
+            description: "The device identifier that is added to messages published via MQTT (see MQTT message format)"
+          publishFreeHeap:
+            type: boolean
+            default: false
+            description: "If true, the controller adds the number of bytes that are free on the heap to a message published via LoRa. Note that a status flag indicates the present of this information in the LoRA packet (see LoRA packet format for more details)."
+          publishViaMqtt:
+            type: boolean
+            default: false
+            description: "If true and the controller is connected to an MQTT broker via WiFi, measurements and device information messages will be published via MQTT"
+          publishViaLora:
+            type: boolean
+            default: false
+            description: "If true, measurements will be published via LoRa"
+          mqttSensorTopic:
+            type: string
+            example: smt/measurements
+            default: null
+            description: "The MQTT topic the controller publishes measurement messages to"
+          mqttInfoTopic:
+            type: string
+            example: smt/status
+            default: null
+            description: "The MQTT topic the controller publishes status messages to"
+          mqttCmdTopic:
+            type: string
+            example: smt/cmd
+            default: null
+            description: "The MQTT topic the controller subscribes to for consuming MQTT command messages, e.g., to programm the RS485 address of a wired SMT100 sensor. You can disable this feature by setting this property to 'null'."
+          mqttPublishingInterval:
+            type: integer
+            example: 10000
+            default: 10000
+            description: "The duration in milliseconds between two MQTT publishing cycles. If the controller is in 'power saving' mode and WiFi and MQTT are enabled, the controller enters deep sleep for the specified duration. Note: if the controller is in 'power saving' mode and both publishing via MQTT and LoRa is enabled, the longer intervall will be applied for both publishing cycles."
+          loraPublishingInterval:
+            type: integer
+            example: 3600000
+            default: 3600000
+            description: "The duration in milliseconds between two LoRa publishing cycles. If the controller is in 'power saving' mode and LoRa is enabled, the controller enters deep sleep for the specified duration. Note: if the controller is in 'power saving' mode and both publishing via MQTT and LoRa is enabled, the longer intervall will be applied for both publishing cycles."
+      mqttConfig:
+        type: object
+        properties:
+          connect:
+            type: boolean
+            default: false
+            description: "If true and a WiFi connection to a station is given, the controller will try to connect to the specified MQTT broker"
+          broker:
+            type: string
+            example: 10.0.10.50
+            description: "The address of the MQTT broker. This can be either an IP address or a hostname (FQDN). If you specify the broker's IP address, make sure to set the 'isIpAddress' to true"
+          isIpAddress:
+            type: boolean
+            default: false
+            description: "True if the specified broker address is an IP address. Note that you have set this flag manually."
+          port:
+            type: integer
+            minimum: 1
+            maximum: 49151
+            default: 1883
+            example: 1883
+            description: "Port of the MQTT broker."
+          clientName:
+            type: string
+            example: smt-sensor
+            description: "MQTT client name"
+          username:
+            type: string
+            example: smt-user
+            description: "MQTT username"
+          password:
+            type: string
+            example: password123
+            description: MQTT password
+          timeout:
+            type: integer
+            default: 1
+            example: 1
+            minimum: 1
+            maximum: 65535
+            description: "MQTT client socket timeout in seconds"
+      webConfig:
+        type: object
+        properties:
+          enabled:
+            type: boolean
+            default: true
+            description: "True if the built-in HTTP server is enabled. Note that the HTTP server will be only available if the controller is in 'permanent on' mode and WiFi is enabled."
+          port:
+            type: integer
+            minimum: 1
+            maximum: 49151
+            default: 80
+            example: 80
+            description: "TCP port the built-in HTTP server is listening on"
+          user:
+            type: string
+            example: admin
+            description: "Username for HTTP basic authorization"
+          password:
+            type: string
+            example: "password123"
+            description: "Password for HTTP basic authorization"
+          authorizationEnabled:
+            type: boolean
+            default: false
+            description: "True if HTTP basic authorization is enabled, which means that all HTTP endpoints are protected"
+          allowAnyOrigin:
+            type: boolean
+            default: true
+            description: "CORS: true if any origin is allowed"
+          allowedOrigins:
+            type: array
+            items:
+              type: string
+            description: "CORS: list of allowed origins"
+      wifiConfig:
+        type: object
+        properties:
+          mode:
+            type: integer
+            enum: [0,1,2,3]
+            default: 0
+            example: 3
+            description: "The WiFi connectivity mode when the controller is in 'permanent on' mode: 0 = WiFi is disabled; 1 = controller acts as a WiFi client and tries to connect to station; 2 = controller opens an access point; 3 = connectivity behavior is set by jumper (JP2)"
+          ssid:
+            type: string
+            example: MyWiFi
+            description: "The SSID of the WiFi network the controller connects to when being in WiFi client mode (1)"
+          password:
+            type: string
+            example: MyWiFiPassword
+            description: "The password of the WiFi network that is used when being in WiFi client mode (1)"
+          ssidAp:
+            type: string
+            example: smt-controller-ap
+            description: "The SSID the controller broadcasts when being in access point mode (2)"
+          passwordAp:
+            type: string
+            example: smt-controller-ap
+            description: "The password that is used for the access point when being in access point mode (2)"
+          hostname:
+            type: string
+            example: my-smt-controller
+            description: "The controller's hostname"
+      hypermedia:
+        type: object
+        properties:
+          _links:
+            type: array
+            items:
+              $ref: '#/components/schemas/hyperlink'
+      hyperlink:
+        type: object
+        properties:
+          rel:
+            type: string
+          href:
+            type: string
+
+  
+  
+ 
