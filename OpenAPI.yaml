@@ -2,6 +2,46 @@ openapi: '3.0.2'
 info:
   title: Web API for SMT LoRa Controller
   version: '1.0'
+  description: "## Overview\n
+                The SMT LoRa Controller exposes a Web API that is available over **WiFi** when the controller is in **Permanent On** mode. The main purpose of this API is to offer an interface for configuring a controller unit.
+                However, the Web API also exposes endpoints for reading the status of the controller, querying measurements, rebooting, updating the firmware and file system, and SMT100 address programming via RS485.\n
+                ## Accessibility\n
+                This Web API is exposed over a built-in HTTP server on the controller. To make the Web API accessible to a Web API client, the controller needs to be connected over WiFi to a station, e.g., a WiFi access point/router, 
+                or has to open a WiFi access point. The latter option is preferred if there is no external WiFi network in range and the Web API needs to be used only temporarily or especially for the initial configuration of the controller.
+                Note that the Web API is only available when the controller is in **Permanent On** mode. The following section describes how to enter **Permanent On** mode and establish a WiFi connection:\n
+
+                1. Ensure that your controller is powered with an external power supply before entering **Permanent On** mode. Connect a 5V power supply with at least 500mA, e.g., a USB charger, to the **USB port** of the **solar power manager board** (not the ESP32 board).\n
+                2. By default*, the WiFi connectivity mode can be selected by setting ```JP2``` on the controller board. To open a WiFi access point, ```open``` ```JP2```. To establish a connection between the controller and a WiFi network, ```close``` ```JP2```. Note that the latter option requires an SSID and password for the WiFi network set in the controller's WiFi configuration. For the initial configuration, opening an access point and using the default credentials is recommended (see step 4).\n
+                3. If you wish to switch from **Power Saving** mode to **Permanent On** mode only once, press ```SW1``` (without changing ```JP1```) while being in **Power Saving** mode. After a reset, the controller switches back to **Power Saving** mode automatically.
+                If you want to stay in **Permanent On** mode without switching back to **Power Saving** mode, ```close``` ```JP1``` and press ```RST```.\n
+
+                ### Access Point\n
+                4. If not overwritten yet in the controller's WiFi configuration, use the following default credentials to connect your client to the controller's access point:\n
+                - SSID: ```smt-lora-controller```\n
+                - Password: ```password```\n
+                5. Access the Web API over the following base path: [http://192.168.4.1/](http://192.168.4.1/)\n
+
+                ### External WiFi Network\n
+                4. Connect your client to the same WiFi network the controller is connected to.\n
+                5. Access the Web API over the following base path: http://[IP-Address]/, with [IP-Address] being the DHCP-assigned IP address of the controller.\n
+
+                *Note: For security reasons, it is possible to overwrite the WiFi connectivity mode selection so that the connectivity mode is selected in the controller's WiFi configuration but cannot be selected by setting ```JP2```.
+                
+                ## Authentication\n
+                By default, all Web API endpoints are unprotected. You can enable HTTP basic authentication over the controller's Web configuration so that a username and a password are required to access the Web API.
+
+                ## Configuration\n
+                The controller exposes several endpoints for querying and modifying the controller's configuration. The configuration consists of numerous parameters that are organized thematically in sub-configurations.
+                The WiFi configuration, for instance, holds all network-relevant parameters. Moreover, the controller maintains two versions of the configuration in memory. The first version is the configuration that is active, i.e., currently applied by the controller.
+                These parameters are read-only and cannot be modified directly. The second version is an exact copy of the active configuration. These parameters can be modified by using ```HTTP PUT```.
+                However, any modifications won't get active until the next reboot of the controller. Therefore, after completing all modifications, you have to save the changes using ```POST /configuration``` and then reboot the controller.
+                After rebooting, the modified configuration becomes the new active configuration.\n
+                ### Example\n
+                For the controller's WiFi configuration, there exists three endpoints:\n
+                * ```GET /active-configuration/wifi``` returns the parameters of the active WiFi configuration. This resource is read-only.\n
+                * ```GET /configuration/wifi``` returns the parameters of the non-active WiFi configuration. This resource encompasses the same parameter set like in its active counterpart with - if not modified yet - same values.\n
+                * ```PUT /configuration/wifi``` allows the modification of the WiFi configuration. These modifications become active after saving the configuration (```POST /configuration```) and rebootig the controller.\n
+                "
 servers:
   - url: http://192.168.4.1/
 
@@ -836,10 +876,6 @@ components:
       webConfig:
         type: object
         properties:
-          enabled:
-            type: boolean
-            default: true
-            description: "True if the built-in HTTP server is enabled. Note that the HTTP server will be only available if the controller is in 'permanent on' mode and WiFi is enabled."
           port:
             type: integer
             minimum: 1
@@ -850,15 +886,15 @@ components:
           user:
             type: string
             example: admin
-            description: "Username for HTTP basic authorization"
+            description: "Username for HTTP basic authentication"
           password:
             type: string
             example: "password123"
-            description: "Password for HTTP basic authorization"
+            description: "Password for HTTP basic authentication"
           authorizationEnabled:
             type: boolean
             default: false
-            description: "True if HTTP basic authorization is enabled, which means that all HTTP endpoints are protected"
+            description: "True if HTTP basic authentication is enabled, which means that all HTTP endpoints are protected"
           allowAnyOrigin:
             type: boolean
             default: true
@@ -874,7 +910,7 @@ components:
           mode:
             type: integer
             enum: [0,1,2,3]
-            default: 0
+            default: 3
             example: 3
             description: "The WiFi connectivity mode when the controller is in 'permanent on' mode: 0 = WiFi is disabled; 1 = controller acts as a WiFi client and tries to connect to station; 2 = controller opens an access point; 3 = connectivity behavior is set by jumper (JP2)"
           ssid:
@@ -887,11 +923,13 @@ components:
             description: "The password of the WiFi network that is used when being in WiFi client mode (1)"
           ssidAp:
             type: string
-            example: smt-controller-ap
+            default: smt-lora-controller
+            example: smt-lora-controller
             description: "The SSID the controller broadcasts when being in access point mode (2)"
           passwordAp:
             type: string
-            example: smt-controller-ap
+            default: password
+            example: password
             description: "The password that is used for the access point when being in access point mode (2)"
           hostname:
             type: string
@@ -911,7 +949,3 @@ components:
             type: string
           href:
             type: string
-
-  
-  
- 
