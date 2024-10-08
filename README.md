@@ -36,10 +36,10 @@ In permanent on mode, the controller can either act as a WiFi client and connect
 
 | JP1 | JP2 |  Mode | Connectivity |
 | --- | --- | --- | --- |
-| open | open | Normal mode | LoRa |
-| open | closed | Normal mode | LoRa & WiFi client |
-| closed | open | Config mode | LoRa & WiFi access point* |
-| closed | closed | Config mode | LoRa & WiFi client* |
+| open | open | Power Saving | LoRa |
+| open | closed | Power Saving | LoRa & WiFi client |
+| closed | open | Permanent On | LoRa & WiFi access point* |
+| closed | closed | Permanent On | LoRa & WiFi client* |
 
 *Note: The connectivity mode in permanent on mode can be overwritten by network configuration. 
 
